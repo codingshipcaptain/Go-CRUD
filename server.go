@@ -9,13 +9,18 @@ import (
     _ "github.com/go-sql-driver/mysql"
 )
 
+// Full CRUD application in GoLang
+
+// Setup #1 install MySQL make a new database create a table with 
+
+// Employee structure that demonstrates the employee in the database
 type Employee struct {
-    Id    int
-    Name  string
+    Id int
+    Name string
     City string
 }
 
-// using the 
+// dbConn returns a reference to the SQL database
 func dbConn() (db *sql.DB) {
     dbDriver := "mysql"
     dbUser := "root"
@@ -30,6 +35,7 @@ func dbConn() (db *sql.DB) {
 
 var tmpl = template.Must(template.ParseGlob("form/*"))
 
+// Index pulls all the entries from the database and renders them to the Index.tmpl
 func Index(w http.ResponseWriter, r *http.Request) {
     db := dbConn()
     selDB, err := db.Query("SELECT * FROM Employee ORDER BY id DESC")
@@ -54,6 +60,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
     defer db.Close()
 }
 
+// Show pulls one specific entry in the database and loads the Show.tmpl
 func Show(w http.ResponseWriter, r *http.Request) {
     db := dbConn()
     nId := r.URL.Query().Get("id")
@@ -77,10 +84,12 @@ func Show(w http.ResponseWriter, r *http.Request) {
     defer db.Close()
 }
 
+// New loads the page for New.tmpl which is a form for inputting new entries into the DB
 func New(w http.ResponseWriter, r *http.Request) {
     tmpl.ExecuteTemplate(w, "New", nil)
 }
 
+// Edit Renders the page for editing an existing entry and loads the text of the existing entry into the text firelds
 func Edit(w http.ResponseWriter, r *http.Request) {
     db := dbConn()
     nId := r.URL.Query().Get("id")
@@ -104,6 +113,7 @@ func Edit(w http.ResponseWriter, r *http.Request) {
     defer db.Close()
 }
 
+// Insert Handles the database query where it inserts a new entry to the database
 func Insert(w http.ResponseWriter, r *http.Request) {
     db := dbConn()
     if r.Method == "POST" {
@@ -120,6 +130,7 @@ func Insert(w http.ResponseWriter, r *http.Request) {
     http.Redirect(w, r, "/", 301)
 }
 
+// Update handles the database query where it updates an entry in the database
 func Update(w http.ResponseWriter, r *http.Request) {
     db := dbConn()
     if r.Method == "POST" {
@@ -137,6 +148,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
     http.Redirect(w, r, "/", 301)
 }
 
+// Delete Handles the database query where it removes an entry fro mthe database 
 func Delete(w http.ResponseWriter, r *http.Request) {
     db := dbConn()
     emp := r.URL.Query().Get("id")
@@ -151,13 +163,20 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+    // URL routing
     log.Println("Server started on: http://localhost:8080")
-    http.HandleFunc("/", Index)
-    http.HandleFunc("/show", Show)
+
+    // Getters (GET)
+    http.HandleFunc("/", Index) // READ or Get
+    http.HandleFunc("/show", Show) // READ or Get
     http.HandleFunc("/new", New)
-    http.HandleFunc("/edit", Edit)
-    http.HandleFunc("/insert", Insert)
-    http.HandleFunc("/update", Update)
-    http.HandleFunc("/delete", Delete)
+    http.HandleFunc("/edit", Edit) // READ or Get
+
+    // setters (POST)
+    http.HandleFunc("/insert", Insert) // CREATE or POST
+    http.HandleFunc("/update", Update) // UPDATE or Put
+    http.HandleFunc("/delete", Delete) // DELETE
+
+    // setting up the server 
     http.ListenAndServe(":8080", nil)
 }
