@@ -5,7 +5,6 @@ import (
     "log"
     "net/http"
     "text/template"
-
     _ "github.com/go-sql-driver/mysql"
 )
 
@@ -20,12 +19,41 @@ type Employee struct {
     City string
 }
 
+// dbInit Initializes a SQL DB for the web page
+func dbInit () {
+    db, err:= sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/")
+    if err != nil{
+        panic(err.Error())
+    } else {
+        _, err = db.Exec("CREATE DATABASE goblog")
+        if err != nil {
+            log.Println(err.Error())
+        } else {
+            log.Println("Database Created")
+        }
+        db.Exec("USE goblog")
+        stmt, err := db.Prepare("CREATE TABLE `employee` (`id` int(6) unsigned NOT NULL AUTO_INCREMENT,`name` varchar(30) NOT NULL,`city` varchar(30) NOT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;")
+        if err != nil {
+            log.Println(err.Error())
+        } else {
+            _, err = stmt.Exec()
+            if err != nil {
+                log.Println(err.Error())
+            } else {
+                log.Println("Table Created")
+            }
+        }
+    }
+}
+
 // dbConn returns a reference to the SQL database
 func dbConn() (db *sql.DB) {
     dbDriver := "mysql"
     dbUser := "root"
     dbPass := "root"
     dbName := "goblog"
+
+
     db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
     if err != nil {
         panic(err.Error())
@@ -163,8 +191,11 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+    // this is run once to Initialize the DB upon running 
+    // it will log some errors stating the db already exists if youve ran the program before dont worry it keeps going if that happens
+    dbInit()
     // URL routing
-    log.Println("Server started on: http://localhost:8080")
+    log.Println("Server started on: http://localhost:8000")
 
     // Getters (GET)
     http.HandleFunc("/", Index) // READ or Get
@@ -178,5 +209,5 @@ func main() {
     http.HandleFunc("/delete", Delete) // DELETE
 
     // setting up the server 
-    http.ListenAndServe(":8080", nil)
+    http.ListenAndServe(":8000", nil)
 }
