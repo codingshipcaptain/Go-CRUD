@@ -48,11 +48,11 @@ func dbInit () {
 
 // dbConn returns a reference to the SQL database
 func dbConn() (db *sql.DB) {
+    // declaring some variables to use in the in the when opening the db not super useful now but later version will be helpful
     dbDriver := "mysql"
     dbUser := "root"
     dbPass := "root"
     dbName := "goblog"
-
 
     db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
     if err != nil {
@@ -190,10 +190,15 @@ func Delete(w http.ResponseWriter, r *http.Request) {
     http.Redirect(w, r, "/", 301)
 }
 
+func tester() {
+
+}
+
 func main() {
     // this is run once to Initialize the DB upon running 
     // it will log some errors stating the db already exists if youve ran the program before dont worry it keeps going if that happens
     dbInit()
+    
     // URL routing
     log.Println("Server started on: http://localhost:8000")
 
