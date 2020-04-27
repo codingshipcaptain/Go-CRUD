@@ -67,14 +67,14 @@ func createFile(path string, fileName string, panicTrigger bool, content string)
 func createFileStructure() {
     path := "form"
     os.MkdirAll(path, 0777)
-    createFile(path, "Header.tmpl", false, "{{ define \"Header\" }} \n<!DOCTYPE html> \n<html lang=\"en-US\"> \n\t<head> \n\t\t<title>Golang MySQL CRUD Example</title> \n\t\t<meta charset=\"UTF-8\" /> \n\t</head> \n\t<body> \n\t\t<h1>Golang MySQL CRUD Example</h1> \n{{ end }}")
+    createFile(path, "Header.tmpl", false, "{{ define \"Header\" }} \n<!DOCTYPE html> \n<html lang=\"en-US\"> \n\t<head> \n\t\t<title>Golang MySQL CRUD Spawner</title> \n\t\t<meta charset=\"UTF-8\" /> \n\t</head> \n\t<body> \n\t\t<h1>Golang MySQL CRUD Spawner</h1> \n{{ end }}")
     createFile(path, "Edit.tmpl", false, "{{ define \"Edit\" }}\n\t{{ template \"Header\" }}\n\t\t{{ template \"Menu\" }}\n\t\t<h2>Edit Name and City</h2>\n\t\t<form method=\"POST\" action=\"update\">\n\t\t\t<input type=\"hidden\" name=\"uid\" value=\"{{ .Id }}\" />\n\t\t\t<label> Name </label><input type=\"text\" name=\"name\" value=\"{{ .Name }}\" /><br />\n\t\t\t<label> City </label><input type=\"text\" name=\"city\" value=\"{{ .City }}\" /><br />\n\t\t\t<input type=\"submit\" value=\"Save user\" />\n\t\t</form><br />\n\t{{ template \"Footer\" }}\n{{ end }}")
     createFile(path, "Footer.tmpl", false, "{{ define \"Footer\" }}\n</body>\n\n</html>\n{{ end }}")
     createFile(path, "Index.tmpl", false, "{{ define \"Index\" }}\n\t{{ template \"Header\" }}\n\t\t{{ template \"Menu\"  }}\n\t\t<h2> Registered </h2>\n\t\t<table border=\"1\">\n\t\t\t<thead>\n\t\t\t\t<tr>\n\t\t\t\t\t<td>ID</td>\n\t\t\t\t\t<td>Name</td>\n\t\t\t\t\t<td>City</td>\n\t\t\t\t\t<td>View</td>\n\t\t\t\t\t<td>Edit</td>\n\t\t\t\t\t<td>Delete</td>\n\t\t\t\t</tr>\n\t\t\t</thead>\n\t\t\t<tbody>\n\t\t\t\t{{ range . }}\n\t\t\t\t<tr>\n\t\t\t\t\t<td>{{ .Id }}</td>\n\t\t\t\t\t<td> {{ .Name }} </td>\n\t\t\t\t\t<td>{{ .City }} </td>\n\t\t\t\t\t<td><a href=\"/show?id={{ .Id }}\">View</a></td>\n\t\t\t\t\t<td><a href=\"/edit?id={{ .Id }}\">Edit</a></td>\n\t\t\t\t\t<td><a href=\"/delete?id={{ .Id }}\">Delete</a></td>\n\t\t\t\t</tr>\n\t\t\t\t{{ end }}\n\t\t\t</tbody>\n\t\t</table>\n\t{{ template \"Footer\" }}\n{{ end }}")
     createFile(path, "Menu.tmpl", false, "{{ define \"Menu\" }}\n<a href=\"/\">HOME</a> | \n<a href=\"/new\">NEW</a>\n{{ end }}")
     createFile(path, "New.tmpl", false, "call New.tmpl file inside form.\n\n{{ define \"New\" }}\n\t{{ template \"Header\" }}\n\t\t{{ template \"Menu\" }}\n\t\t<h2>New Name and City</h2>\n\t\t<form method=\"POST\" action=\"insert\">\n\t\t\t<label> Name </label><input type=\"text\" name=\"name\" /><br />\n\t\t\t<label> City </label><input type=\"text\" name=\"city\" /><br />\n\t\t\t<input type=\"submit\" value=\"Save user\" />\n\t\t</form>\n\t{{ template \"Footer\" }}\n{{ end }}")
     createFile(path, "Show.tmpl", false, "{{ define \"Show\" }}\n\t{{ template \"Header\" }}\n\t\t{{ template \"Menu\"  }}\n\t\t<h2> Register {{ .Id }} </h2>\n\t\t\t<p>Name: {{ .Name }}</p>\n\t\t\t<p>City:  {{ .City }}</p><br /> <a href=\"/edit?id={{ .Id }}\">Edit</a></p>\n\t{{ template \"Footer\" }}\n{{ end }}")
-
+    
 }
 
 // dbInit Initializes a SQL DB for the web page
@@ -119,7 +119,12 @@ func dbConn() (db *sql.DB) {
     return db
 }
 
-var tmpl = template.Must(template.ParseGlob("form/*"))
+// getTemplates this imports the templates from the form folder
+// this is done for flow reasons upon startup as wel as allowing for the ability
+// to make changes to the html formatting without restarting the server
+func getTemplates()(*template.Template){
+    return template.Must(template.ParseGlob("form/*"))
+}
 
 // Index pulls all the entries from the database and renders them to the Index.tmpl
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -142,7 +147,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
         emp.City = city
         res = append(res, emp)
     }
-    tmpl.ExecuteTemplate(w, "Index", res)
+    getTemplates().ExecuteTemplate(w, "Index", res)
     defer db.Close()
 }
 
@@ -166,13 +171,13 @@ func Show(w http.ResponseWriter, r *http.Request) {
         emp.Name = name
         emp.City = city
     }
-    tmpl.ExecuteTemplate(w, "Show", emp)
+    getTemplates().ExecuteTemplate(w, "Show", emp)
     defer db.Close()
 }
 
 // New loads the page for New.tmpl which is a form for inputting new entries into the DB
 func New(w http.ResponseWriter, r *http.Request) {
-    tmpl.ExecuteTemplate(w, "New", nil)
+    getTemplates().ExecuteTemplate(w, "New", nil)
 }
 
 // Edit Renders the page for editing an existing entry and loads the text of the existing entry into the text firelds
@@ -195,7 +200,7 @@ func Edit(w http.ResponseWriter, r *http.Request) {
         emp.Name = name
         emp.City = city
     }
-    tmpl.ExecuteTemplate(w, "Edit", emp)
+    getTemplates().ExecuteTemplate(w, "Edit", emp)
     defer db.Close()
 }
 
