@@ -92,7 +92,7 @@ func dbInit () {
             log.Println("Database Created:", "\""+"goblog"+"\"")
         }
         db.Exec("USE goblog")
-        stmt, err := db.Prepare("CREATE TABLE `employee` (`id` int(6) unsigned NOT NULL AUTO_INCREMENT,`name` varchar(30) NOT NULL,`city` varchar(30) NOT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;")
+        stmt, err := db.Prepare("CREATE TABLE `employee` (`id` int(6) unsigned NOT NULL AUTO_INCREMENT,`name` varchar(30) NOT NULL,`city` varchar(30) NOT NULL,PRIMARY KEY (`id`));")
         if err != nil {
             log.Println(err.Error())
         } else {
@@ -252,6 +252,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 func Delete(w http.ResponseWriter, r *http.Request) {
     db := dbConn()
     emp := r.URL.Query().Get("id")
+    log.Println(emp)
     delForm, err := db.Prepare("DELETE FROM Employee WHERE id=?")
     if err != nil {
         panic(err.Error())
