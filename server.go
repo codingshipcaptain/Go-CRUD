@@ -67,6 +67,7 @@ func createFile(path string, fileName string, panicTrigger bool, content string)
 func createFileStructure() {
     path := "form"
     os.MkdirAll(path, 0777)
+    os.MkdirAll("configs", 0777)
     createFile(path, "Header.tmpl", false, "{{ define \"Header\" }} \n<!DOCTYPE html> \n<html lang=\"en-US\"> \n\t<head> \n\t\t<title>Golang MySQL CRUD Spawner</title> \n\t\t<meta charset=\"UTF-8\" /> \n\t</head> \n\t<body> \n\t\t<h1>Golang MySQL CRUD Spawner</h1> \n{{ end }}")
     createFile(path, "Edit.tmpl", false, "{{ define \"Edit\" }}\n\t{{ template \"Header\" }}\n\t\t{{ template \"Menu\" }}\n\t\t<h2>Edit Name and City</h2>\n\t\t<form method=\"POST\" action=\"update\">\n\t\t\t<input type=\"hidden\" name=\"uid\" value=\"{{ .Id }}\" />\n\t\t\t<label> Name </label><input type=\"text\" name=\"name\" value=\"{{ .Name }}\" /><br />\n\t\t\t<label> City </label><input type=\"text\" name=\"city\" value=\"{{ .City }}\" /><br />\n\t\t\t<input type=\"submit\" value=\"Save user\" />\n\t\t</form><br />\n\t{{ template \"Footer\" }}\n{{ end }}")
     createFile(path, "Footer.tmpl", false, "{{ define \"Footer\" }}\n</body>\n\n</html>\n{{ end }}")
@@ -74,7 +75,8 @@ func createFileStructure() {
     createFile(path, "Menu.tmpl", false, "{{ define \"Menu\" }}\n<a href=\"/\">HOME</a> | \n<a href=\"/new\">NEW</a>\n{{ end }}")
     createFile(path, "New.tmpl", false, "call New.tmpl file inside form.\n\n{{ define \"New\" }}\n\t{{ template \"Header\" }}\n\t\t{{ template \"Menu\" }}\n\t\t<h2>New Name and City</h2>\n\t\t<form method=\"POST\" action=\"insert\">\n\t\t\t<label> Name </label><input type=\"text\" name=\"name\" /><br />\n\t\t\t<label> City </label><input type=\"text\" name=\"city\" /><br />\n\t\t\t<input type=\"submit\" value=\"Save user\" />\n\t\t</form>\n\t{{ template \"Footer\" }}\n{{ end }}")
     createFile(path, "Show.tmpl", false, "{{ define \"Show\" }}\n\t{{ template \"Header\" }}\n\t\t{{ template \"Menu\"  }}\n\t\t<h2> Register {{ .Id }} </h2>\n\t\t\t<p>Name: {{ .Name }}</p>\n\t\t\t<p>City:  {{ .City }}</p><br /> <a href=\"/edit?id={{ .Id }}\">Edit</a></p>\n\t{{ template \"Footer\" }}\n{{ end }}")
-    
+
+
 }
 
 // dbInit Initializes a SQL DB for the web page
@@ -87,7 +89,7 @@ func dbInit () {
         if err != nil {
             log.Println(err.Error())
         } else {
-            log.Println("Database Created")
+            log.Println("Database Created:", "\""+"goblog"+"\"")
         }
         db.Exec("USE goblog")
         stmt, err := db.Prepare("CREATE TABLE `employee` (`id` int(6) unsigned NOT NULL AUTO_INCREMENT,`name` varchar(30) NOT NULL,`city` varchar(30) NOT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;")
@@ -98,11 +100,18 @@ func dbInit () {
             if err != nil {
                 log.Println(err.Error())
             } else {
-                log.Println("Table Created")
+                log.Println("Table Created", "\""+"employees"+"\"")
             }
         }
     }
 }
+
+// dbConfigs gets the info from configs/dbConfig.json about your database connection
+// func dbConfigs()(dbUser string, dbPass string){
+
+
+//     return "", ""
+// }
 
 // dbConn returns a reference to the SQL database
 func dbConn() (db *sql.DB) {
