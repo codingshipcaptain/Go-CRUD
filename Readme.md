@@ -2,14 +2,14 @@ GO CRUD Spawner
 
 Description: this program is meant to create a simple CRUD (Create, Read, Update, Delete) application with a MySQL backend database.
 
-Prerequisits:
+Prerequisits:\n
     1. install GoLang the proper files and instructions for that can be found here https://golang.org/doc/install 
     2. Install MySQL This page can help you with this selecting the proper version for your OS 
         Install instructions: https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/windows-installation.html
         Community downloads: https://dev.mysql.com/downloads/installer/
     3. Go SQL driver which can be found here or by typing "go get -u github.com/go-sql-driver/mysql" into your choice of command shell (I know this works with git bash and windows powershell)
     4. download (and extract if neccesary) the master git repo
-    5. this assumes that your MySQL user is "root" and your password is "root" this can be changed on line 120 and 121 however read future plans for more info 
+    5. this assumes that your MySQL user is "root" and your password is "root" this can be changed on line 120, 121 and 84 ("root:root" is user:password) however read future plans for more info 
 
 Launch Instructions
     1. MAKE SURE YOU HAVE ALL THE PREREQUISITS
