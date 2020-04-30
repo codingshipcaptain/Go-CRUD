@@ -34,9 +34,16 @@ the URL http://localhost:8000 by default will take you to your server instance
 
 
 ## Future Plans
+##### NOTE: crossouts mean that this functionality has been implemented but other branches may still have this apply to them
 1. ~~integrate a prompt to the user through the terminal to input the dbUser and dbPass variables on line 120 and line 121~~ which will create a json file where its stored.
 2. allow for user input into the terminal to tell the system the table name, how many fields the table has and customize the column names and types with an error check that loops back to the user if the type is not valid (just to keep it all nice and happy)
 3. allow for multiple tables to be created with association
-4. make it runnable in either web page, API, or hybrid mode where hybrid has both an api server and the web page references the API and you can also use the seperate API server for raw JSON streams
-might also add support for other serialization types like XML 
-5. add integration for other database types.
+4. make it runnable in either web page, API, or hybrid mode where hybrid has both an api server and the web page references the API and you can also use the seperate API server for raw JSON streams 
+    * might also add support for other serialization types like XML 
+5. add integration for other database types
+    * SQL
+        * ~~MySQL~~
+        * Postgres 
+    * NoSQL
+        * MongoDB
+
