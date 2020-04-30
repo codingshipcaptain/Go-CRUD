@@ -18,7 +18,10 @@ this program is meant to create a simple CRUD (Create, Read, Update, Delete) app
 ## Launch Instructions
 1. MAKE SURE YOU HAVE ALL THE PREREQUISITS
 2. navigate or open your command shell to the root file directory where you downloaded the git repo to
-3. type "go run server.go" this should start the server you may have to give permissions to the program run and use your network
+3. type the following into the command line this should start the server you may have to give permissions to the program run and use your network
+```sh
+   go run server.go 
+``` 
 4. the server will prompt your for the username, password, and the name of the database to pull from for you application (case sensative).
 
 ## How it Works
