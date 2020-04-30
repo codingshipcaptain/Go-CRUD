@@ -18,7 +18,7 @@ this program is meant to create a simple CRUD (Create, Read, Update, Delete) app
 ## Launch Instructions
 1. MAKE SURE YOU HAVE ALL THE PREREQUISITS
 2. navigate or open your command shell to the root file directory where you downloaded the git repo to
-3. type the following into the command line this should start the server you may have to give permissions to the program run and use your network
+3. type the following into the command line this should start the server you may have to give permissions to the program to use your network
 ```sh
    go run server.go 
 ``` 
@@ -28,7 +28,7 @@ this program is meant to create a simple CRUD (Create, Read, Update, Delete) app
 ### Initialization (first time run)
 1. it starts by creating the database and tables it if you run this subsequent times it will log an error but not stop stating that the database and table already exist.
 2. it creates a few template files that have some HTML formatting in them upon startup the server checks to make sure these files exist and if they do it does nothing so editing these files for your personal preference of styling can be done without consequence. if they do not exist or you delete any of them it will recreate the file to its original state
-### Server start:
+### Server start
 after user inputs the server starts listening on port 8000 by default it can be changed by hard coding the first string value on line 291 but it would be suggested to also change the log on line 277 so that it prints the correct string to reflect.
 the URL http://localhost:8000 by default will take you to your server instance 
 
