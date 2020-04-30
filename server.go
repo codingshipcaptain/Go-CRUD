@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"database/sql"
 	"log"
+	"fmt"
 	"net/http"
 	"os"
 	"text/template"
@@ -34,17 +35,17 @@ func getCreds() Credentials {
     reader := bufio.NewReader(os.Stdin)
 
     // prompts user for username
-    log.Println("User Name:")
+    fmt.Println("User Name:")
     creds.userName, _ = reader.ReadString('\n')
     creds.userName = strings.Replace(creds.userName, "\r\n", "", -1)
 
     // prompts user for password
-    log.Println("Password:")
+    fmt.Println("Password:")
     creds.passWord, _ = reader.ReadString('\n')
     creds.passWord = strings.Replace(creds.passWord, "\r\n", "", -1)
 
     // prompts user for db name
-    log.Println("Database Name:")
+    fmt.Println("Database Name:")
     creds.dbName, _ = reader.ReadString('\n')
     creds.dbName = strings.Replace(creds.dbName, "\r\n", "", -1)
 
