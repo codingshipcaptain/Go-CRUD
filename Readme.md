@@ -9,7 +9,7 @@ this program is meant to create a simple CRUD (Create, Read, Update, Delete) app
 2. Install MySQL This page can help you with this selecting the proper version for your OS 
     * Install instructions: https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/windows-installation.html
     * Community downloads: https://dev.mysql.com/downloads/installer/
-3. Go SQL driver which can be found here or by typing ``` go get -u github.com/go-sql-driver/mysql ``` into your choice of command shell (I know this works with git bash and windows powershell)
+3. Go SQL driver which can be found here or by typing ```sh go get -u github.com/go-sql-driver/mysql ``` into your choice of command shell (I know this works with git bash and windows powershell)
 4. download (and extract if neccesary) the master git repo
 
 ## Launch Instructions
@@ -20,7 +20,7 @@ this program is meant to create a simple CRUD (Create, Read, Update, Delete) app
 
 ## How it Works
 ### Initialization (first time run)
-1. it starts by creating the database and tables it if you run this subsequent times it will log an error but not stop; stating that the database and table already exist.
+1. it starts by creating the database and tables it if you run this subsequent times it will log an error but not stop stating that the database and table already exist.
 2. it creates a few template files that have some HTML formatting in them upon startup the server checks to make sure these files exist and if they do it does nothing so editing these files for your personal preference of styling can be done without consequence. if they do not exist or you delete any of them it will recreate the file to its original state
 ### Server start:
 after user inputs the server starts listening on port 8000 by default it can be changed by hard coding the first string value on line 291 but it would be suggested to also change the log on line 277 so that it prints the correct string to reflect.
