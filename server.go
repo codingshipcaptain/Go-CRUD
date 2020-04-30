@@ -3,12 +3,11 @@ package main
 import (
 	"bufio"
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"text/template"
-
+    "strings"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -22,6 +21,37 @@ type Employee struct {
 	Name string
 	City string
 }
+
+// Credentials structure that represents the connection information to input into the terminal 
+type Credentials struct {
+    userName string
+    passWord string
+    dbName string
+}
+
+func getCreds() Credentials {
+    creds := Credentials{}
+    reader := bufio.NewReader(os.Stdin)
+
+    // prompts user for username
+    log.Println("User Name:")
+    creds.userName, _ = reader.ReadString('\n')
+    creds.userName = strings.Replace(creds.userName, "\r\n", "", -1)
+
+    // prompts user for password
+    log.Println("Password:")
+    creds.passWord, _ = reader.ReadString('\n')
+    creds.passWord = strings.Replace(creds.passWord, "\r\n", "", -1)
+
+    // prompts user for db name
+    log.Println("Database Name:")
+    creds.dbName, _ = reader.ReadString('\n')
+    creds.dbName = strings.Replace(creds.dbName, "\r\n", "", -1)
+
+    return creds
+}
+
+var creds Credentials = getCreds()
 
 // createFile makes a file it takes 3 parameters
 // path (string) the child directory from the root that the file goes into DO NOT MAKE THIS A BLANK STRING
@@ -86,26 +116,21 @@ func createFileStructure() {
 // dbInit Initializes a SQL DB for the web page
 func dbInit() {
 	//User Input
-	reader := bufio.NewReader(os.Stdin) //create new reader, assuming bufio imported
-	var usrnm string
-	var pass string
-	fmt.Println("db username")
-	usrnm, _ = reader.ReadString('\n')
-	fmt.Println("db pass")
-	pass, _ = reader.ReadString('\n')
-	println(usrnm, pass)
-
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/")
+	usernm := creds.userName
+    pass := creds.passWord
+    dbName := creds.dbName
+	log.Println(usernm+":"+pass+"@tcp(127.0.0.1:3306)/")
+	db, err := sql.Open("mysql", usernm+":"+pass+"@tcp(127.0.0.1:3306)/")
 	if err != nil {
 		panic(err.Error())
 	} else {
-		_, err = db.Exec("CREATE DATABASE goblog")
+		_, err = db.Exec("CREATE DATABASE "+dbName)
 		if err != nil {
 			log.Println(err.Error())
 		} else {
-			log.Println("Database Created:", "\""+"goblog"+"\"")
+			log.Println("Database Created:", "\""+dbName+"\"")
 		}
-		db.Exec("USE goblog")
+		db.Exec("USE "+dbName)
 		stmt, err := db.Prepare("CREATE TABLE `employee` (`id` int(6) unsigned NOT NULL AUTO_INCREMENT,`name` varchar(30) NOT NULL,`city` varchar(30) NOT NULL,PRIMARY KEY (`id`));")
 		if err != nil {
 			log.Println(err.Error())
@@ -130,9 +155,9 @@ func dbInit() {
 func dbConn() (db *sql.DB) {
 	// declaring some variables to use in the in the when opening the db not super useful now but later version will be helpful
 	dbDriver := "mysql"
-	dbUser := "root"
-	dbPass := "root"
-	dbName := "goblog"
+	dbUser := creds.userName
+	dbPass := creds.passWord
+	dbName := creds.dbName
 
 	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
 	if err != nil {
