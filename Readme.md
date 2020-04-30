@@ -9,7 +9,10 @@ this program is meant to create a simple CRUD (Create, Read, Update, Delete) app
 2. Install MySQL This page can help you with this selecting the proper version for your OS 
     * Install instructions: https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/windows-installation.html
     * Community downloads: https://dev.mysql.com/downloads/installer/
-3. Go SQL driver which can be found here or by typing ```sh go get -u github.com/go-sql-driver/mysql ``` into your choice of command shell (I know this works with git bash and windows powershell)
+3. Go SQL driver which can be found here or by typing the following into the command line 
+```sh
+   go get -u github.com/go-sql-driver/mysql 
+```
 4. download (and extract if neccesary) the master git repo
 
 ## Launch Instructions
