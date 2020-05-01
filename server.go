@@ -10,6 +10,8 @@ import (
 	"text/template"
     "strings"
 	_ "github.com/go-sql-driver/mysql"
+	"io/ioutil"
+	"encoding/json"
 )
 
 // Full CRUD application in GoLang
@@ -25,34 +27,52 @@ type Employee struct {
 
 // Credentials structure that represents the connection information to input into the terminal 
 type Credentials struct {
-    userName string
-    passWord string
-    dbName string
+    UserName string
+    Password string
+    DBName string
+}
+
+func credChecker() Credentials {
+	var creds Credentials
+	_, err := os.Stat("configs")
+	if err != nil{
+		creds = getCreds()
+		os.MkdirAll("configs", 0777)
+		file, _ := json.MarshalIndent(creds, "", "\t")
+		_ = ioutil.WriteFile("configs/creds.json", file, 0644)
+	} else {
+		// pulls the creds folder if there was no error on checking the status.
+		file, _ := ioutil.ReadFile("configs/creds.json")
+		_ = json.Unmarshal(file, &creds)
+	}
+	return creds
 }
 
 func getCreds() Credentials {
     creds := Credentials{}
     reader := bufio.NewReader(os.Stdin)
 
-    // prompts user for username
-    fmt.Println("User Name:")
-    creds.userName, _ = reader.ReadString('\n')
-    creds.userName = strings.Replace(creds.userName, "\r\n", "", -1)
 
-    // prompts user for password
+
+    // prompts user for UserName
+    fmt.Println("User Name:")
+    creds.UserName, _ = reader.ReadString('\n')
+    creds.UserName = strings.Replace(creds.UserName, "\r\n", "", -1)
+
+    // prompts user for Password
     fmt.Println("Password:")
-    creds.passWord, _ = reader.ReadString('\n')
-    creds.passWord = strings.Replace(creds.passWord, "\r\n", "", -1)
+    creds.Password, _ = reader.ReadString('\n')
+    creds.Password = strings.Replace(creds.Password, "\r\n", "", -1)
 
     // prompts user for db name
     fmt.Println("Database Name:")
-    creds.dbName, _ = reader.ReadString('\n')
-    creds.dbName = strings.Replace(creds.dbName, "\r\n", "", -1)
+    creds.DBName, _ = reader.ReadString('\n')
+    creds.DBName = strings.Replace(creds.DBName, "\r\n", "", -1)
 
     return creds
 }
 
-var creds Credentials = getCreds()
+var creds Credentials = credChecker()
 
 // createFile makes a file it takes 3 parameters
 // path (string) the child directory from the root that the file goes into DO NOT MAKE THIS A BLANK STRING
@@ -103,7 +123,6 @@ func createFile(path string, fileName string, panicTrigger bool, content string)
 func createFileStructure() {
 	path := "form"
 	os.MkdirAll(path, 0777)
-	os.MkdirAll("configs", 0777)
 	createFile(path, "Header.tmpl", false, "{{ define \"Header\" }} \n<!DOCTYPE html> \n<html lang=\"en-US\"> \n\t<head> \n\t\t<title>Golang MySQL CRUD Spawner</title> \n\t\t<meta charset=\"UTF-8\" /> \n\t</head> \n\t<body> \n\t\t<h1>Golang MySQL CRUD Spawner</h1> \n{{ end }}")
 	createFile(path, "Edit.tmpl", false, "{{ define \"Edit\" }}\n\t{{ template \"Header\" }}\n\t\t{{ template \"Menu\" }}\n\t\t<h2>Edit Name and City</h2>\n\t\t<form method=\"POST\" action=\"update\">\n\t\t\t<input type=\"hidden\" name=\"uid\" value=\"{{ .Id }}\" />\n\t\t\t<label> Name </label><input type=\"text\" name=\"name\" value=\"{{ .Name }}\" /><br />\n\t\t\t<label> City </label><input type=\"text\" name=\"city\" value=\"{{ .City }}\" /><br />\n\t\t\t<input type=\"submit\" value=\"Save user\" />\n\t\t</form><br />\n\t{{ template \"Footer\" }}\n{{ end }}")
 	createFile(path, "Footer.tmpl", false, "{{ define \"Footer\" }}\n</body>\n\n</html>\n{{ end }}")
@@ -117,21 +136,21 @@ func createFileStructure() {
 // dbInit Initializes a SQL DB for the web page
 func dbInit() {
 	//User Input
-	usernm := creds.userName
-    pass := creds.passWord
-    dbName := creds.dbName
+	usernm := creds.UserName
+    pass := creds.Password
+    DBName := creds.DBName
 	log.Println(usernm+":"+pass+"@tcp(127.0.0.1:3306)/")
 	db, err := sql.Open("mysql", usernm+":"+pass+"@tcp(127.0.0.1:3306)/")
 	if err != nil {
 		panic(err.Error())
 	} else {
-		_, err = db.Exec("CREATE DATABASE "+dbName)
+		_, err = db.Exec("CREATE DATABASE "+DBName)
 		if err != nil {
 			log.Println(err.Error())
 		} else {
-			log.Println("Database Created:", "\""+dbName+"\"")
+			log.Println("Database Created:", "\""+DBName+"\"")
 		}
-		db.Exec("USE "+dbName)
+		db.Exec("USE "+DBName)
 		stmt, err := db.Prepare("CREATE TABLE `employee` (`id` int(6) unsigned NOT NULL AUTO_INCREMENT,`name` varchar(30) NOT NULL,`city` varchar(30) NOT NULL,PRIMARY KEY (`id`));")
 		if err != nil {
 			log.Println(err.Error())
@@ -156,11 +175,11 @@ func dbInit() {
 func dbConn() (db *sql.DB) {
 	// declaring some variables to use in the in the when opening the db not super useful now but later version will be helpful
 	dbDriver := "mysql"
-	dbUser := creds.userName
-	dbPass := creds.passWord
-	dbName := creds.dbName
+	dbUser := creds.UserName
+	dbPass := creds.Password
+	DBName := creds.DBName
 
-	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
+	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+DBName)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -307,6 +326,7 @@ func tester() {
 }
 
 func main() {
+	credChecker()
 	// this is run once to Initialize the DB upon running
 	// it will log some errors stating the db already exists if youve ran the program before dont worry it keeps going if that happens
 	dbInit()
