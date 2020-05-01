@@ -4,7 +4,7 @@
 
 this program is meant to create a simple CRUD (Create, Read, Update, Delete) application with a MySQL backend database.
 
-## Prerequisits
+## Prerequisites
 1. install GoLang the proper files and instructions for that can be found here https://golang.org/doc/install 
 2. Install MySQL This page can help you with this selecting the proper version for your OS 
     * Install instructions: https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/windows-installation.html
@@ -22,7 +22,7 @@ this program is meant to create a simple CRUD (Create, Read, Update, Delete) app
 ```sh
    go run server.go 
 ``` 
-4. the server will prompt your for the username, password, and the name of the database to pull from for you application (case sensative).
+4. the first time the program is ran it will prompt the user for credentials to access your database and the name of the database. if youve done this already the credentials and database name are saved in a JSON file in configs which is pulled upon server start so if you need to change this in the future you can just change the JSON file.
 
 ## How it Works
 ### Initialization (first time run)
@@ -35,7 +35,8 @@ the URL http://localhost:8000 by default will take you to your server instance
 
 ## Future Plans
 ##### NOTE: crossouts mean that this functionality has been implemented but other branches may still have this apply to them
-1. ~~integrate a prompt to the user through the terminal to input the dbUser and dbPass variables on line 120 and line 121~~ which will create a json file where its stored.
+1. ~~integrate a prompt to the user through the terminal to input the dbUser and dbPass variables on line 120 and line 121 which will create a json file where its stored.~~
+    * loop back to asking for credentials if access is denied
 2. allow for user input into the terminal to tell the system the table name, how many fields the table has and customize the column names and types with an error check that loops back to the user if the type is not valid (just to keep it all nice and happy)
 3. allow for multiple tables to be created with association
 4. make it runnable in either web page, API, or hybrid mode where hybrid has both an api server and the web page references the API and you can also use the seperate API server for raw JSON streams 
