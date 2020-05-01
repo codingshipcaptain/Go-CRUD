@@ -4,7 +4,7 @@
 
 this program is meant to create a simple CRUD (Create, Read, Update, Delete) application with a MySQL backend database.
 
-## Prerequisits
+## Prerequisites
 1. install GoLang the proper files and instructions for that can be found here https://golang.org/doc/install 
 2. Install MySQL This page can help you with this selecting the proper version for your OS 
     * Install instructions: https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/windows-installation.html
