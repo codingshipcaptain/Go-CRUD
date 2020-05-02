@@ -54,22 +54,30 @@ func credChecker() Credentials {
 
 func getCreds() Credentials {
 	creds := Credentials{}
-	reader := bufio.NewReader(os.Stdin)
-	lit.Debug("getCreds post reader")
-	// prompts user for UserName
-	fmt.Println("User Name:")
-	creds.UserName, _ = reader.ReadString('\n')
-	creds.UserName = strings.Replace(creds.UserName, "\r\n", "", -1)
+	db, _ := sql.Open("mysql", creds.UserName+":"+creds.Password+"@tcp(127.0.0.1:3306)/")
+	validCred := db.Ping()
 
-	// prompts user for Password
-	fmt.Println("Password:")
-	creds.Password, _ = reader.ReadString('\n')
-	creds.Password = strings.Replace(creds.Password, "\r\n", "", -1)
-
-	// prompts user for db name
-	fmt.Println("Database Name:")
-	creds.DBName, _ = reader.ReadString('\n')
-	creds.DBName = strings.Replace(creds.DBName, "\r\n", "", -1)
+	for validCred != nil {
+		reader := bufio.NewReader(os.Stdin)
+		lit.Debug("getCreds post reader")
+		// prompts user for UserName
+		fmt.Println("User Name:")
+		creds.UserName, _ = reader.ReadString('\n')
+		creds.UserName = strings.Replace(creds.UserName, "\r\n", "", -1)
+	
+		// prompts user for Password
+		fmt.Println("Password:")
+		creds.Password, _ = reader.ReadString('\n')
+		creds.Password = strings.Replace(creds.Password, "\r\n", "", -1)
+	
+		// prompts user for db name
+		fmt.Println("Database Name:")
+		creds.DBName, _ = reader.ReadString('\n')
+		creds.DBName = strings.Replace(creds.DBName, "\r\n", "", -1)
+		db, _ = sql.Open("mysql", creds.UserName+":"+creds.Password+"@tcp(127.0.0.1:3306)/")
+		validCred = db.Ping()
+		log.Println(validCred)
+	}
 
 	return creds
 }
@@ -174,12 +182,6 @@ func dbInit() {
 		}
 	}
 }
-
-// dbConfigs gets the info from configs/dbConfig.json about your database connection
-// func dbConfigs()(dbUser string, dbPass string){
-
-//     return "", ""
-// }
 
 // dbConn returns a reference to the SQL database
 func dbConn() (db *sql.DB) {
